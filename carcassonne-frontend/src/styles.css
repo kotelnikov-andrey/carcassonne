@@ -1,0 +1,38 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #fafafa;
+}
+
+h1 {
+  color: #333;
+}
+
+p {
+  color: #666;
+}
+
+header,
+footer {
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* styles.css */
+.game-container {
+  padding: 20px;
+  text-align: center;
+}
+
+.current-player {
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+.move-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+}
