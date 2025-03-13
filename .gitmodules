@@ -1,0 +1,3 @@
+[submodule "Carcassone-Backend"]
+	path = Carcassone-Backend
+	url = https://github.com/kotelnikov-andrey/carcassonne-kotlin-backend.git
