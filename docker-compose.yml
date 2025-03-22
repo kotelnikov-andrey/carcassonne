@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:14
+    container_name: carcassonne-postgres
+    environment:
+      POSTGRES_USER: carcassonne
+      POSTGRES_PASSWORD: carcassonne
+      POSTGRES_DB: carcassonne
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - carcassonne-network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: carcassonne-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+    networks:
+      - carcassonne-network
+
+networks:
+  carcassonne-network:
+    driver: bridge
+
+volumes:
+  postgres_data:

@@ -16,34 +16,45 @@ function addNeighbors(board, x, y) {
   });
 }
 
-const joinGame = (req, res) => {
-  const { gameId } = req.params;
-  const { playerName } = req.body;
+const joinGame = async (req, res) => {
+  try {
+    const { gameId } = req.params;
+    const { playerName } = req.body;
 
-  if (!games[gameId]) {
-    console.log(`Ошибка: Игра с ID ${gameId} не найдена`);
-    return res.status(404).json({ errorMessage: "Игра не найдена" });
+    // Find game in database
+    const game = await Game.findById(gameId);
+    
+    if (!game) {
+      console.log(`Ошибка: Игра с ID ${gameId} не найдена`);
+      return res.status(404).json({ errorMessage: "Игра не найдена" });
+    }
+
+    const newPlayer = {
+      playerId: `player${game.players.length + 1}`,
+      name: playerName,
+      meeples: 7,
+    };
+
+    game.players.push(newPlayer);
+
+    // Save changes to database
+    await game.save();
+
+    console.log(
+      `Игрок "${playerName}" подключился к игре ${gameId}. Всего игроков: ${game.players.length}`
+    );
+
+    const token = jwt.sign(
+      { playerId: newPlayer.playerId },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+
+    return res.status(200).json({ token, players: game.players });
+  } catch (error) {
+    console.error("Error joining game:", error);
+    return res.status(500).json({ errorMessage: "Internal server error" });
   }
-
-  const newPlayer = {
-    playerId: `player${games[gameId].players.length + 1}`,
-    name: playerName,
-    meeples: 7,
-  };
-
-  games[gameId].players.push(newPlayer);
-
-  console.log(
-    `Игрок "${playerName}" подключился к игре ${gameId}. Всего игроков: ${games[gameId].players.length}`
-  );
-
-  const token = jwt.sign(
-    { playerId: newPlayer.playerId },
-    process.env.JWT_SECRET,
-    { expiresIn: "1h" }
-  );
-
-  return res.status(200).json({ token, players: games[gameId].players });
 };
 
 const startGame = (req, res) => {
@@ -130,28 +141,47 @@ const makeMove = (req, res) => {
   }
 };
 
-const getGameState = (req, res) => {
-  const { gameId } = req.params;
+const getGameState = async (req, res) => {
+  try {
+    const { gameId } = req.params;
 
-  if (!games[gameId]) {
-    return res.status(404).json({ errorMessage: "Игра не найдена" });
+    // Find game in database
+    const game = await Game.findById(gameId);
+    
+    if (!game) {
+      return res.status(404).json({ errorMessage: "Игра не найдена" });
+    }
+
+    return res.status(200).json(game);
+  } catch (error) {
+    console.error("Error getting game state:", error);
+    return res.status(500).json({ errorMessage: "Internal server error" });
   }
-
-  return res.status(200).json(games[gameId]);
 };
 
-const Game = require("../models/gameModel");
 const { getEffectiveSides, matchRules } = require("../helpers/matchRules");
+const Game = require("../models/gameModel");
 
-const createGame = (req, res) => {
-  const gameId = Math.random().toString(36).substr(2, 9).toUpperCase();
-  const newGame = new Game(gameId);
-
-  games[gameId] = newGame;
-
-  console.log(`Игра создана: ${gameId} (Ожидание игроков)`);
-
-  res.status(200).json({ gameId });
+// Create a new game
+const createGame = async (req, res) => {
+  try {
+    const gameId = Math.random().toString(36).substr(2, 9).toUpperCase();
+    const newGame = new Game(gameId);
+    
+    // Save the game to the database
+    const saved = await newGame.save();
+    
+    if (!saved) {
+      return res.status(500).json({ errorMessage: "Ошибка при создании игры" });
+    }
+    
+    console.log(`Игра создана: ${gameId} (Ожидание игроков)`);
+    
+    res.status(200).json({ gameId });
+  } catch (error) {
+    console.error("Error creating game:", error);
+    res.status(500).json({ errorMessage: "Внутренняя ошибка сервера" });
+  }
 };
 
 const leaveGame = (req, res) => {
