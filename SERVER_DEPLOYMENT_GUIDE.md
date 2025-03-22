@@ -42,37 +42,99 @@ But for now, the current schema is adequate.
 
 ### Step 1: Choose a Cloud Provider
 
-Several cloud providers offer virtual servers. Here are some popular options:
+Several cloud providers offer virtual servers. Here are options based on your location:
 
-1. **DigitalOcean** (Recommended for beginners)
+#### Options Accessible Worldwide (Including Russia)
+
+1. **Selectel** (Recommended for Russian users)
+   - Russian cloud provider with data centers in Russia
+   - Complies with Russian data regulations
+   - Offers VPS and dedicated servers
+   - Website: [Selectel](https://selectel.ru/)
+
+2. **Timeweb**
+   - Russian hosting provider
+   - Affordable VPS options
+   - Good technical support in Russian
+   - Website: [Timeweb](https://timeweb.com/)
+
+3. **Beget**
+   - Russian hosting with VPS options
+   - User-friendly control panel
+   - Good for beginners
+   - Website: [Beget](https://beget.com/)
+
+4. **Reg.ru**
+   - Popular Russian hosting provider
+   - Various VPS configurations
+   - Website: [Reg.ru](https://reg.ru/)
+
+5. **Hetzner** (German provider, often accessible in Russia)
+   - European provider with good pricing
+   - Data centers in Germany and Finland
+   - Website: [Hetzner](https://www.hetzner.com/)
+
+#### Options for Users Outside Russia
+
+1. **DigitalOcean** (Recommended for beginners outside Russia)
    - Simple pricing model
    - User-friendly interface
    - Good documentation
+   - Note: May have restrictions for Russian users
 
 2. **AWS (Amazon Web Services)**
    - More features but more complex
    - Free tier available for 12 months
    - Widely used in industry
+   - Note: Has restrictions for Russian users
 
 3. **Google Cloud Platform**
    - Similar to AWS
    - Free tier available
    - Good integration with other Google services
+   - Note: Has restrictions for Russian users
 
 4. **Heroku**
    - Very easy to deploy
    - Free tier available (with limitations)
    - Less control over the server
+   - Note: Has restrictions for Russian users
 
-For this guide, we'll use DigitalOcean as it's straightforward for beginners.
+For this guide, we'll provide instructions that work with any provider, with specific notes for Selectel (for Russian users) and DigitalOcean (for users outside Russia).
 
-### Step 2: Create a DigitalOcean Account
+### Step 2: Create an Account
+
+#### Option A: Selectel (For Russian Users)
+
+1. Go to [Selectel](https://selectel.ru/)
+2. Click "Регистрация" (Registration)
+3. Fill in your details and create an account
+4. Add a payment method (credit card, electronic payment, or bank transfer)
+
+#### Option B: DigitalOcean (For Users Outside Russia)
 
 1. Go to [DigitalOcean](https://www.digitalocean.com/)
 2. Sign up for an account
 3. Add a payment method
 
-### Step 3: Create a Droplet (Virtual Server)
+### Step 3: Create a Virtual Server
+
+#### Option A: Creating a VPS on Selectel
+
+1. Sign in to your Selectel account
+2. Navigate to "Облачная платформа" → "Виртуальные машины" (Cloud Platform → Virtual Machines)
+3. Click "Создать ВМ" (Create VM)
+4. Choose configuration:
+   - Operating System: **Ubuntu 22.04 LTS**
+   - Configuration: 1-2 vCPU, 2GB RAM, 20GB storage (minimum recommended)
+   - Network: Create a new network or use existing
+   - Location: Choose a data center in Russia for best performance
+5. Authentication: SSH keys (recommended) or Password
+   - If using SSH keys, add your public key in the appropriate field
+6. Set a name for your server (e.g., `carcassonne-game-server`)
+7. Click "Создать" (Create)
+
+#### Option B: Creating a Droplet on DigitalOcean
 
 1. From the DigitalOcean dashboard, click "Create" → "Droplets"
 2. Choose an image: **Ubuntu 22.04 LTS**
@@ -88,16 +150,31 @@ For this guide, we'll use DigitalOcean as it's straightforward for beginners.
 
 ### Step 4: Connect to Your Server
 
+For both Selectel and DigitalOcean, you'll need to find your server's IP address in your provider's dashboard.
+
+#### For Selectel:
+- Go to "Облачная платформа" → "Виртуальные машины" (Cloud Platform → Virtual Machines)
+- Find your server in the list and note its IP address
+
+#### For DigitalOcean:
+- Go to the Droplets section
+- Find your droplet in the list and note its IP address
+
 #### Using SSH (Mac/Linux):
 
 ```bash
+# If you used a password during setup
 ssh root@your_server_ip
+
+# If you used SSH keys
+ssh -i /path/to/your/private_key root@your_server_ip
 ```
 
 #### Using PuTTY (Windows):
 1. Download and install [PuTTY](https://www.putty.org/)
 2. Enter your server IP in the "Host Name" field
-3. Click "Open" and enter your credentials
+3. If using SSH keys, configure them in Connection → SSH → Auth → Credentials
+4. Click "Open" and enter your credentials if prompted
 
 ### Step 5: Install Required Software
 
