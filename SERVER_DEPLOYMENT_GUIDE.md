@@ -224,6 +224,21 @@ npm install -g pm2
    sudo nano /etc/postgresql/14/main/pg_hba.conf
    ```
    
+   > **Note:** The `pg_hba.conf` file is NOT empty. It's PostgreSQL's client authentication configuration file and contains many lines of configuration and comments. You'll need to scroll down to find the specific line to modify.
+   
+   The file will look something like this (with many more lines and comments):
+   
+   ```
+   # TYPE  DATABASE        USER            ADDRESS                 METHOD
+   
+   # "local" is for Unix domain socket connections only
+   local   all             all                                     peer
+   # IPv4 local connections:
+   host    all             all             127.0.0.1/32            scram-sha-256
+   # IPv6 local connections:
+   host    all             all             ::1/128                 scram-sha-256
+   ```
+   
    Find the line that looks like:
    ```
    local   all             all                                     peer
@@ -233,6 +248,16 @@ npm install -g pm2
    ```
    local   all             all                                     md5
    ```
+   
+   **What this change does:**
+   
+   - The `pg_hba.conf` file controls how PostgreSQL authenticates clients
+   - The `local` line controls connections made through Unix domain sockets (local connections)
+   - Changing from `peer` to `md5` authentication method means:
+     - `peer`: Authentication based on the operating system user (requires the database user to match the OS user)
+     - `md5`: Password-based authentication using MD5 hashing
+   
+   This change allows your application to connect to PostgreSQL using a username and password, rather than requiring the OS user to match the database user. Without this change, your Node.js application wouldn't be able to connect to PostgreSQL using the credentials you specified.
 
 5. Restart PostgreSQL:
    ```bash
