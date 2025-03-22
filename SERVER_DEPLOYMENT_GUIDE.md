@@ -221,8 +221,14 @@ npm install -g pm2
 
 4. Configure PostgreSQL to allow password authentication:
    ```bash
-   sudo nano /etc/postgresql/14/main/pg_hba.conf
+   # For PostgreSQL 16 (check your version with 'psql --version')
+   sudo nano /etc/postgresql/16/main/pg_hba.conf
+   
+   # If the file is not found, locate it with:
+   sudo find /etc -name "pg_hba.conf"
    ```
+   
+   > **Important:** The path to pg_hba.conf depends on your PostgreSQL version. The guide shows version 16, but adjust the path based on your installed version (e.g., `/etc/postgresql/14/main/pg_hba.conf` for PostgreSQL 14).
    
    > **Note:** The `pg_hba.conf` file is NOT empty. It's PostgreSQL's client authentication configuration file and contains many lines of configuration and comments. You'll need to scroll down to find the specific line to modify.
    
@@ -446,7 +452,8 @@ To give team members direct access to the database:
 
 1. Configure PostgreSQL to allow remote connections:
    ```bash
-   sudo nano /etc/postgresql/14/main/postgresql.conf
+   # For PostgreSQL 16 (check your version with 'psql --version')
+   sudo nano /etc/postgresql/16/main/postgresql.conf
    ```
    
    Find and uncomment:
@@ -461,7 +468,8 @@ To give team members direct access to the database:
 
 2. Allow connections in pg_hba.conf:
    ```bash
-   sudo nano /etc/postgresql/14/main/pg_hba.conf
+   # For PostgreSQL 16 (check your version with 'psql --version')
+   sudo nano /etc/postgresql/16/main/pg_hba.conf
    ```
    
    Add at the end:
