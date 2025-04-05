@@ -1,5 +1,5 @@
 const { validateTilePlacement } = require('../helpers/matchRules');
-const { getSegmentForClick, tileAreas } = require('../helpers/tileSegments');
+const { findAreaByName } = require('../helpers/tileSegments');
 const { calculateScores } = require('../helpers/featureScoring');
 
 const games = {};
@@ -467,23 +467,18 @@ const placeMeeple = async (req, res) => {
     }
 
     // Находим тип области по имени
-    const areas = tileAreas[tile.type] || [];
-    const area = areas.find(a => a.name === areaName);
+    const area = findAreaByName(tile.type, areaName);
     
     if (!area) {
       return res.status(400).json({ errorMessage: "Указанная область не найдена" });
     }
 
-    // Вычисляем центр области для визуального отображения
-    const centerX = area.polygon.reduce((sum, [x]) => sum + x, 0) / area.polygon.length * TILE_SIZE;
-    const centerY = area.polygon.reduce((sum, [_, y]) => sum + y, 0) / area.polygon.length * TILE_SIZE;
-
+    // Сохраняем только логическую информацию, без координат
     tile.meeple = {
       color: player.color,
       segment: areaName,
-      segmentType: area.type,
-      offsetX: centerX,
-      offsetY: centerY
+      segmentType: area.type
+      // Координаты теперь рассчитываются на стороне клиента
     };
 
     await game.save();

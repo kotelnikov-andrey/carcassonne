@@ -1,7 +1,18 @@
 import React from "react";
 import TileOverlay from "./TileOverlay";
+import { calculateMeeplePosition } from "../data/tileAreas";
 
 function TileComponent({ tile, tileSize, onAreaClick }) {
+  // Рассчитываем позицию мипла, если он существует
+  let meeplePosition = { x: 0, y: 0 };
+  if (tile.meeple) {
+    meeplePosition = calculateMeeplePosition(
+      tile.meeple.segment,
+      tile.type,
+      tileSize,
+      tile.rotation
+    );
+  }
   return (
     <div style={{ position: "relative", width: tileSize, height: tileSize }}>
       <img
@@ -24,8 +35,8 @@ function TileComponent({ tile, tileSize, onAreaClick }) {
         <div
           style={{
             position: "absolute",
-            left: tile.meeple.offsetX - 7.5,
-            top: tile.meeple.offsetY - 7.5,
+            left: meeplePosition.x - 7.5,
+            top: meeplePosition.y - 7.5,
             width: "15px",
             height: "15px",
             borderRadius: "50%",
